@@ -94,6 +94,10 @@ def main() -> None:
         raise RuntimeError("shuffled metadata source does not match --source")
 
     source_duration = recordings(source_m / "tts-recordings.jsonl.gz")
+    # A derivation may cover only part of the source (--limit / --recording-ids);
+    # compare against the meetings it actually selected.
+    selected = set(metadata["selected_recordings"])
+    source_duration = {k: v for k, v in source_duration.items() if k in selected}
     shuffled_duration = recordings(shuffled_m / "tts-recordings.jsonl.gz")
     if set(source_duration) != set(shuffled_duration):
         raise RuntimeError("source and shuffled recording IDs differ")
